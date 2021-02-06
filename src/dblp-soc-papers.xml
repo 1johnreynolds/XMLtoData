@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE dblp SYSTEM "C:\Users\c18jo\IdeaProjects\PARSER\src\dblp.dtd">
+<!DOCTYPE dblp SYSTEM "/Users/beichenhu/Desktop/Service-Oriented Computing /Lab1/CS7340Lab1/XMLtoData/XMLfile/dblp.dtd">
 <dblp>
 <inproceedings mdate="2017-06-04" key="conf/icws/MaB05">
 <author>Kevin J. Ma</author>

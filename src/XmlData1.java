@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.w3c.dom.*;
@@ -21,15 +20,15 @@ import javax.xml.parsers.*;
  * @date Feb 5th, 2021
  * @since 1.0
  */
-public class XmlData{
+public class XmlData1{
 
     // MySQL 8.0 version or lower - JDBC Driver and Database URL
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/test";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/CS7340TEAMONELABONE";
 
     // set up user name and password of DB
     static final String USER = "root";
-    static final String PASS = "123321123";
+    static final String PASS = "";
 
     /**
      * Set up connection for MySQL DB
@@ -64,8 +63,7 @@ public class XmlData{
 
             // parse the XML file
             //DropTB(stmt);
-            //createTB(stmt);b
-
+            createTB(stmt);
             parseXML(stmt);
             AnswerQuery aq = new AnswerQuery();
             if (aq.chosen().equals("a")) {
@@ -101,61 +99,35 @@ public class XmlData{
 
             } else if (aq.chosen().equals("b")) {
                 String sql_1_3_2;
-                /* 1.3.1 Given a paper name, list its publication metadata, including paper title, all co-authors, publication channel (e.g., conference, journal, etc), time, page etc.*/
-                sql_1_3_2 = "Select distinct(title), author_list, mdate,article_key,editors,pages, author_list, pub_year,EE,url,pub_year,journal,book_title,volume,pub_number" +
-                        " from pub_auth_relInfo where " +
-                        "(journal in (select journal from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and book_title in (select book_title from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and  pub_year in (select pub_year from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and volume in (select volume from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and pub_number in (select pub_number  from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"'));";
-                //sql_1_3_2 = "select * from pub_auth_relInfo where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+"'";
+                sql_1_3_2 = "/* 1.3.1 Given author name A, list all of her co-authors.*/\n" +
+                        "Select * from pub_auth_relInfo where " +
+                        "(journal in (select journal from pub_auth_relInfo where title='"+aq.returnQueryB_PaperName()+"') \n" +
+                        "and book_title in (select book_title from pub_auth_relInfo where title='"+aq.returnQueryB_PaperName()+"') \n" +
+                        "and  pub_year in (select pub_year from pub_auth_relInfo where title='"+aq.returnQueryB_PaperName()+"') \n" +
+                        "and volume in (select volume from pub_auth_relInfo where title='"+aq.returnQueryB_PaperName()+"') \n" +
+                        "and pub_number in (select pub_number  from pub_auth_relInfo where title='"+aq.returnQueryB_PaperName()+"')  ;";
+
                 ResultSet rs = stmt.executeQuery(sql_1_3_2);
-                HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
+
                 List<String> coAuthors = new ArrayList<String>();
                 while (rs.next()) {
-                    String author_list = rs.getString("author_list");
-                    String title  = rs.getString("title");
-                    String mdate = rs.getString("mdate");
-                    String article_key = rs.getString("article_key");
-                    String editors = rs.getString("editors");
-                    String pages = rs.getString("pages");
-                    String ee = rs.getString("EE");
-                    String url = rs.getString("url");
-                    int pub_year = rs.getInt("pub_year");
-                    String journal = rs.getString("journal");
-                    String book_title = rs.getString("book_title");
-                    int volume = rs.getInt("volume");
-                    int pub_number = rs.getInt("pub_number");
-
-                    // output data into terminal
-                    System.out.println("Title: " + title);
-                    System.out.println(", Mdate: " + mdate);
-                    System.out.println(", Author: " + author_list);
-                    System.out.println(", Article_key: " + article_key);
-                    System.out.println(", Editors: " + editors);
-                    System.out.println(", Pages: " + pages);
-                    System.out.println(", EE: " + ee);
-                    System.out.println(", URL: " + url);
-                    System.out.println(", Pub_year: " + pub_year);
-                    System.out.println(", Journal: " + journal);
-                    System.out.println(", Book_title: " + book_title);
-                    System.out.println(", Volume: " + volume);
-                    System.out.println(", Pub_number: " + pub_number);
-                    System.out.println("---------------------------------------");
-                    System.out.println();
-                    //coAuthors.add(author);
+                    String author = rs.getString("author");
+                    // System.out.print(author);
+                    // System.out.print("\n");
+                    coAuthors.add(author);
                 }
-//                if (!coAuthors.isEmpty()) {
-//                    System.out.println("co-authors are: ");
-//                    for (String s : coAuthors) {
-//                        System.out.println(s);
-//                    }
-//                    System.out.println();
-////                    System.out.println(coAuthors);
-//                } else {
-//                    System.out.println("Cannot find co-authors for given author.");
-//                }
+
+                if (!coAuthors.isEmpty()) {
+                    System.out.println("co-authors are: ");
+                    for (String s : coAuthors) {
+                        System.out.println(s);
+                    }
+                    System.out.println();
+//                    System.out.println(coAuthors);
+                } else {
+                    System.out.println("Cannot find co-authors for given author.");
+                }
+
                 rs.close();
             } else if (aq.chosen().equals("c")) {
                 //

@@ -566,8 +566,16 @@ public class XmlData{
             res = "for $x in doc(\"src/dblp-soc-papers.xml\")/dblp/inproceedings\n" +
                     "where $x/year>2000\n" +
                     "return $x/author";
-        }else {
+        }else if(questionNum == 3) {
+            res = "Query 3";
+
+        }else if(questionNum == 4) {
+            res = "Query 4";
+
+        }else{
+
             res = "error";
+
         }
         return res;
     }
@@ -597,7 +605,7 @@ public class XmlData{
     public static void main(String[] args) throws SQLException {
         //conDB();
         try{
-            int questionNum = 2; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            int questionNum = 1; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
             execute(questionNum);
         }
         catch (XQException e) {

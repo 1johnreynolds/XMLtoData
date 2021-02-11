@@ -14,7 +14,7 @@ import javax.xml.parsers.*;
  * <p>In this class, it mainly has two part, first part is parsing XML file which is publication information from dblp-spc-papers.xml
  * The XML file record the paper information including author, mdate, title, page and etc in recent year.
  * After we parse these file, then we extract all info from XML and save it into Publication class.
- * Then according to different attribute, we create a MySQL DB and create 3 tables: pub_info, auth_info, pub_auth_relInfo
+ * Then according to different attribute, we create a MySQL DB and create 3 tables: pub_info, auth_info, pub_info
  * Then we finish the SQL queries from Dr. Zhang requirments in MySQL.</p>
  *
  * @author Beichen Hu, John Reynolds
@@ -25,11 +25,11 @@ public class XmlData{
 
     // MySQL 8.0 version or lower - JDBC Driver and Database URL
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/test";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/CS7340TEAMONELABONE";
 
     // set up user name and password of DB
     static final String USER = "root";
-    static final String PASS = "123321123";
+    static final String PASS = "";
 
     /**
      * Set up connection for MySQL DB
@@ -64,136 +64,197 @@ public class XmlData{
 
             // parse the XML file
             //DropTB(stmt);
-            //createTB(stmt);b
-
+            //createTB(stmt);
             parseXML(stmt);
             AnswerQuery aq = new AnswerQuery();
-            if (aq.chosen().equals("a")) {
-                String sql_1_3_1;
-                sql_1_3_1 = "/* 1.3.1 Given author name A, list all of her co-authors.*/\n" +
-                        "Select Distinct (author) from pub_auth_relInfo where title in" +
-                        "(select title from pub_auth_relInfo where author='"+aq.returnQueryA_AuthorName()+"') \n" +
-                        "and mdate in(select mdate from pub_auth_relInfo where author='" +
-                        aq.returnQueryA_AuthorName() +
-                        "') Order by author;\n";
-                ResultSet rs = stmt.executeQuery(sql_1_3_1);
+            while(!aq.chosen().equals("q")) {
+                if (aq.chosen().equals("a")) {
+                    String sql_1_3_1;
+                    sql_1_3_1 ="Select Distinct (author) from pub_Info where title in" +
+                            "(select title from pub_Info where author='" + aq.returnQueryA_AuthorName() + "') \n" +
+                            "and mdate in(select mdate from pub_Info where author='" +
+                            aq.returnQueryA_AuthorName() +
+                            "') Order by author;\n";
+                    ResultSet rs = stmt.executeQuery(sql_1_3_1);
 
-                List<String> coAuthors = new ArrayList<String>();
-                while (rs.next()) {
-                    String author = rs.getString("author");
-                    // System.out.print(author);
-                    // System.out.print("\n");
-                    coAuthors.add(author);
-                }
+                    List<String> coAuthors = new ArrayList<String>();
 
-                if (!coAuthors.isEmpty()) {
-                    System.out.println("co-authors are: ");
-                    for (String s : coAuthors) {
-                        System.out.println(s);
+                    while (rs.next()) {
+                        String author = rs.getString("author");
+                        // System.out.print(author);
+                        // System.out.print("\n");
+                        coAuthors.add(author);
                     }
-                    System.out.println();
+
+                    if (!coAuthors.isEmpty()) {
+                        System.out.println("---------------------------------------");
+                        System.out.println("co-authors are: ");
+                        for (String s : coAuthors) {
+                            System.out.println(s);
+                        }
+                        System.out.println();
+                        System.out.println("---------------------------------------");
+                        System.out.println();
 //                    System.out.println(coAuthors);
+                    } else {
+                        System.out.println("Cannot find co-authors for given author.");
+                    }
+
+                    rs.close();
+
+                } else if (aq.chosen().equals("b")) {
+                    String sql_1_3_2;
+                    sql_1_3_2 = "Select distinct(title), author_list, mdate,article_key,editors,pages,author_list,EE,url,pub_year,journal,book_title,volume,pub_number," +
+                            "publisher,ISBN,Series,CROSS_REF" +
+                            " from pub_info where " +
+                            "(journal in (select journal from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+                            "and book_title in (select book_title from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+                            "and  pub_year in (select pub_year from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+                            "and volume in (select volume from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+                            "and pub_number in (select pub_number  from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "'));";
+                    //sql_1_3_2 = "select * from pub_info where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+"'";
+                    ResultSet rs = stmt.executeQuery(sql_1_3_2);
+                    HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
+                    List<String> coAuthors = new ArrayList<String>();
+                    while (rs.next()) {
+                        String author_list = rs.getString("author_list");
+                        String title = rs.getString("title");
+                        String mdate = rs.getString("mdate");
+                        String article_key = rs.getString("article_key");
+                        String editors = rs.getString("editors");
+                        String pages = rs.getString("pages");
+                        String ee = rs.getString("EE");
+                        String url = rs.getString("url");
+                        int pub_year = rs.getInt("pub_year");
+                        String journal = rs.getString("journal");
+                        String book_title = rs.getString("book_title");
+                        int volume = rs.getInt("volume");
+                        int pub_number = rs.getInt("pub_number");
+                        String publisher=rs.getString("publisher");
+                        String ISBN=rs.getString("ISBN");
+                        String Series=rs.getString("Series");
+                        String CROSS_REF=rs.getString("CROSS_REF");
+
+                        // output data into terminal
+                        System.out.println("Title: " + title);
+                        System.out.println(", Mdate: " + mdate);
+                        System.out.println(", Author: " + author_list);
+                        System.out.println(", Key: " + article_key);
+                        System.out.println(", Editors: " + editors);
+                        System.out.println(", Pages: " + pages);
+                        System.out.println(", EE: " + ee);
+                        System.out.println(", URL: " + url);
+                        System.out.println(", Pub_year: " + pub_year);
+                        System.out.println(", Journal: " + journal);
+                        System.out.println(", Book_title: " + book_title);
+                        System.out.println(", Volume: " + volume);
+                        System.out.println(", Pub_number: " + pub_number);
+                        System.out.println(", Publisher: " + publisher);
+                        System.out.println(", ISBN: " + ISBN);
+                        System.out.println(", Series: " + Series);
+                        System.out.println(", CROSS_REF: " + CROSS_REF);
+                        System.out.println("---------------------------------------");
+                        System.out.println();
+                        //coAuthors.add(author);
+                    }
+                    rs.close();
+                } else if (aq.chosen().equals("c")) {
+                    //
+                    String sql_1_3_3;
+                    sql_1_3_3 = "Select distinct(title), author_list, mdate,article_key,editors,pages, author_list,EE,url,pub_year,journal,volume,pub_number" +
+                            " from pub_Info where " +
+                            "journal='" + replacePunctuation(aq.returnQueryC_JournalName()) + "' \n" +
+                            "and volume=" + aq.returnQueryC_Year() + " \n" +
+                            "and  pub_number=" + aq.returnQueryC_Issue() + ";";
+                    //sql_1_3_2 = "select * from pub_info where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+"'";
+                    ResultSet rs = stmt.executeQuery(sql_1_3_3);
+                    HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
+                    List<String> coAuthors = new ArrayList<String>();
+                    while (rs.next()) {
+                        String author_list = rs.getString("author_list");
+                        String title = rs.getString("title");
+                        String mdate = rs.getString("mdate");
+                        String article_key = rs.getString("article_key");
+                        String editors = rs.getString("editors");
+                        String pages = rs.getString("pages");
+                        String ee = rs.getString("EE");
+                        String url = rs.getString("url");
+                        int pub_year = rs.getInt("pub_year");
+                        String journal = rs.getString("journal");
+                        //String book_title = rs.getString("book_title");
+                        int volume = rs.getInt("volume");
+                        int pub_number = rs.getInt("pub_number");
+
+                        // output data into terminal
+                        System.out.println("Title: " + title);
+                        System.out.println(", Mdate: " + mdate);
+                        System.out.println(", Author: " + author_list);
+                        System.out.println(", Article_key: " + article_key);
+                        System.out.println(", Editors: " + editors);
+                        System.out.println(", Pages: " + pages);
+                        System.out.println(", EE: " + ee);
+                        System.out.println(", URL: " + url);
+                        System.out.println(", Pub_year: " + pub_year);
+                        System.out.println(", Journal: " + journal);
+                        //System.out.println(", Book_title: " + book_title);
+                        System.out.println(", Volume: " + volume);
+                        System.out.println(", Pub_number: " + pub_number);
+                        System.out.println("---------------------------------------");
+                        System.out.println();
+                        //coAuthors.add(author);
+                    }
+                    rs.close();
+                } else if (aq.chosen().equals("d")) {
+                    String sql_1_3_4;
+                    /* 1.3.1 Given a paper name, list its publication metadata, including paper title, all co-authors, publication channel (e.g., conference, journal, etc), time, page etc.*/
+                    sql_1_3_4 = "Select distinct(title), author_list, mdate,article_key,editors,pages, author_list, pub_year,EE,url,book_title,cross_ref" +
+                            " from pub_info where " +
+                            "book_title='" + replacePunctuation(aq.returnQueryD_ConferenceName()) + "' \n" +
+                            "and pub_year=" + aq.returnQueryD_Year() + ";";
+                    ResultSet rs = stmt.executeQuery(sql_1_3_4);
+                    while (rs.next()) {
+                        String author_list = rs.getString("author_list");
+                        String title = rs.getString("title");
+                        String mdate = rs.getString("mdate");
+                        String article_key = rs.getString("article_key");
+                        String editors = rs.getString("editors");
+                        String pages = rs.getString("pages");
+                        String ee = rs.getString("EE");
+                        String url = rs.getString("url");
+                        int pub_year = rs.getInt("pub_year");
+                        //String journal = rs.getString("journal");
+                        String book_title = rs.getString("book_title");
+                        //int volume = rs.getInt("volume");
+                        //int pub_number = rs.getInt("pub_number");
+                        String Cross_ref = rs.getString("cross_ref");
+
+                        // output data into terminal
+                        System.out.println("Title: " + title);
+                        System.out.println(", Mdate: " + mdate);
+                        System.out.println(", Author: " + author_list);
+                        System.out.println(", Article_key: " + article_key);
+                        System.out.println(", Editors: " + editors);
+                        System.out.println(", Pages: " + pages);
+                        System.out.println(", EE: " + ee);
+                        System.out.println(", URL: " + url);
+                        System.out.println(", Pub_year: " + pub_year);
+                        //System.out.println(", Journal: " + journal);
+                        System.out.println(", Book_title: " + book_title);
+                        //System.out.println(", Volume: " + volume);
+                        //System.out.println(", Pub_number: " + pub_number);
+                        System.out.println(", Crossref: " + Cross_ref);
+                        System.out.println("---------------------------------------");
+                        System.out.println();
+                        //coAuthors.add(author);
+                    }
+                    rs.close();
                 } else {
-                    System.out.println("Cannot find co-authors for given author.");
+                    System.out.println("Please check your Input!It is case and space sensitive.");
                 }
-
-                rs.close();
-
-            } else if (aq.chosen().equals("b")) {
-                String sql_1_3_2;
-                /* 1.3.1 Given a paper name, list its publication metadata, including paper title, all co-authors, publication channel (e.g., conference, journal, etc), time, page etc.*/
-                sql_1_3_2 = "Select distinct(title), author_list, mdate,article_key,editors,pages, author_list, pub_year,EE,url,pub_year,journal,book_title,volume,pub_number" +
-                        " from pub_auth_relInfo where " +
-                        "(journal in (select journal from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and book_title in (select book_title from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and  pub_year in (select pub_year from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and volume in (select volume from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"') \n" +
-                        "and pub_number in (select pub_number  from pub_auth_relInfo where title='"+replacePunctuation(aq.returnQueryB_PaperName())+"'));";
-                //sql_1_3_2 = "select * from pub_auth_relInfo where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+"'";
-                ResultSet rs = stmt.executeQuery(sql_1_3_2);
-                HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
-                List<String> coAuthors = new ArrayList<String>();
-                while (rs.next()) {
-                    String author_list = rs.getString("author_list");
-                    String title  = rs.getString("title");
-                    String mdate = rs.getString("mdate");
-                    String article_key = rs.getString("article_key");
-                    String editors = rs.getString("editors");
-                    String pages = rs.getString("pages");
-                    String ee = rs.getString("EE");
-                    String url = rs.getString("url");
-                    int pub_year = rs.getInt("pub_year");
-                    String journal = rs.getString("journal");
-                    String book_title = rs.getString("book_title");
-                    int volume = rs.getInt("volume");
-                    int pub_number = rs.getInt("pub_number");
-
-                    // output data into terminal
-                    System.out.println("Title: " + title);
-                    System.out.println(", Mdate: " + mdate);
-                    System.out.println(", Author: " + author_list);
-                    System.out.println(", Article_key: " + article_key);
-                    System.out.println(", Editors: " + editors);
-                    System.out.println(", Pages: " + pages);
-                    System.out.println(", EE: " + ee);
-                    System.out.println(", URL: " + url);
-                    System.out.println(", Pub_year: " + pub_year);
-                    System.out.println(", Journal: " + journal);
-                    System.out.println(", Book_title: " + book_title);
-                    System.out.println(", Volume: " + volume);
-                    System.out.println(", Pub_number: " + pub_number);
-                    System.out.println("---------------------------------------");
-                    System.out.println();
-                    //coAuthors.add(author);
-                }
-//                if (!coAuthors.isEmpty()) {
-//                    System.out.println("co-authors are: ");
-//                    for (String s : coAuthors) {
-//                        System.out.println(s);
-//                    }
-//                    System.out.println();
-////                    System.out.println(coAuthors);
-//                } else {
-//                    System.out.println("Cannot find co-authors for given author.");
-//                }
-                rs.close();
-            } else if (aq.chosen().equals("c")) {
-                //
-            } else if (aq.chosen().equals("d")) {
-                //
-            } else if (aq.chosen().equals("ex")) {
-                //
-            } else {
-                System.out.println("Error exists");
+                aq.nextQuery();
             }
-            // select all information from pub_info
-           /* String sql;
-            sql = "/* 1.3.1 Given author name A, list all of her co-authors.\n" +
-                    "Select Distinct (author) from pub_auth_relInfo where title in" +
-                    "(select title from pub_auth_relInfo where author='Jia zhang') \n" +
-                    "and mdate in(select mdate from pub_auth_relInfo where author='" +
-                    aq.returnQueryA_AuthorName() +
-                    "') Order by author;\n";
-            ResultSet rs = stmt.executeQuery(sql);**/
-            int count=0;
-            // Expand the result set database
-            //while(rs.next()){
-            // Search by field
-               /* int id  = rs.getInt("pid");
-                String mdate = rs.getString("mdate");
-                String author = rs.getString("author");
-                String title = rs.getString("title");**/
 
-            // output data into terminal
-                /*System.out.print("ID: " + id);
-                System.out.print(", mdate: " + mdate);
-                System.out.print(", author: " + author);
-                System.out.print(", title: " + title);
-                System.out.print("\n");**/
 
-            //}
-            // finished and close
-            //rs.close();
             stmt.close();
             conn.close();
         }catch(SQLException se){
@@ -222,24 +283,18 @@ public class XmlData{
      * Create tables for MySQL
      *
      * <p> At here, we can create our tables by using MySQL statement.
-     * We would like to create 3 tables, pub_info, auth_info and pub_auth_relInfo
+     * We would like to create 3 tables, pub_info, auth_info and pub_info
      * table 1: pub_info has primary key: pid which represent publication id
      * table 2: auth_info has primary key: aid which represent author id
-     * table 3: Then we use table 3, pub_auth_relInfo, to connect table1 and table2 according to their relations
+     * table 3: Then we use table 3, pub_info, to connect table1 and table2 according to their relations
      * </p>
      *
      * @throws SQLException if there is an SQL error, fetch the error and print it out in terminal
      */
-    public static void DropTB(Statement stmt) throws SQLException{
-        String Drop = "Drop table pub_auth_relInfo;\n" +
-                "  Drop table auth_info;\n" + // api id is primary key
-                "  Drop table pub_info;";
 
-        stmt.executeUpdate(Drop);
-    }
 
     public static void createTB(Statement stmt) throws SQLException{
-        String createpub = "CREATE TABLE `pub_info` (\n" +
+        /*String createpub = "CREATE TABLE `pub_info` (\n" +
                 "  PUB_YEAR INT DEFAULT 0000,\n" + // api id is primary key
                 "  VOLUME INT NOT NULL DEFAULT 0,\n" +
                 "  JOURNAL VARCHAR(100) NOT NULL DEFAULT '',\n" +
@@ -252,7 +307,7 @@ public class XmlData{
                 "  PRIMARY KEY(JOURNAL,BOOK_TITLE,PUB_YEAR,VOLUME,PUB_NUMBER)\n" +
                 ") ENGINE=InnoDB;";
 
-        stmt.execute(createpub);
+        stmt.execute(createpub);**/
 
         String createauth = "CREATE TABLE auth_info (\n" +
                 "  AUTHOR VARCHAR(100),\n" + // api id is primary key
@@ -260,7 +315,7 @@ public class XmlData{
                 ") ENGINE=InnoDB;";
         stmt.execute(createauth);
 
-        String createarticle = "CREATE TABLE pub_auth_relInfo(\n" +
+        String createarticle = "CREATE TABLE pub_Info(\n" +
                 "TITLE VARCHAR (250)NOT NULL DEFAULT '',\n" + // api id is primary key
                 "MDATE VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "AUTHOR VARCHAR(100)NOT NULL DEFAULT '',\n" +
@@ -275,9 +330,12 @@ public class XmlData{
                 "BOOK_TITLE VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "VOLUME INT NOT NULL DEFAULT 0,\n" +
                 "PUB_NUMBER INT NOT NULL DEFAULT 0,\n" +
+                "PUBLISHER VARCHAR(100) NOT NULL DEFAULT '',\n" +
+                "ISBN VARCHAR(50) NOT NULL DEFAULT '',\n" + // api id is primary key
+                "SERIES VARCHAR(100) NOT NULL DEFAULT '',\n" +
+                "CROSS_REF VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "foreign key(AUTHOR) references auth_info(AUTHOR),\n" +
-                "foreign key(JOURNAL,BOOK_TITLE,PUB_YEAR,VOLUME,PUB_NUMBER) references pub_info(JOURNAL,BOOK_TITLE,PUB_YEAR,VOLUME,PUB_NUMBER),\n" +
-                "  Primary key(TITLE,URl,MDATE,AUTHOR)\n" +
+                "Primary key(TITLE,URl,MDATE,AUTHOR)" +
                 ") ENGINE=InnoDB;";
 
         stmt.execute(createarticle);
@@ -406,11 +464,11 @@ public class XmlData{
                 String temp4=e.title.replaceAll("'","''");**/
 
                 // pubsql = "insert INTO pub_info(pub_year,volume,journal,ISBN,BOOK_TITLE)  VALUES ( " + e.year + ","+e.volume+",'"+e.journal+"','"+e.isbn+"','"+e.book_title+"') ON duplicate KEY UPDATE book_title = book_title;";
-                pubsql = "Insert INTO pub_info VALUES ( " + e.year + "," + e.volume + ",'" + e.journal + "'," +
+                /*pubsql = "Insert INTO pub_info VALUES ( " + e.year + "," + e.volume + ",'" + e.journal + "'," +
                         "" + e.number + ",'"+e.publisher+"','"+e.isbn+"'," +
                         "'"+e.series+"','"+e.cross_ref+"','"+e.book_title+"') " +
                         "ON duplicate KEY UPDATE book_title = book_title;";
-                stmt.execute(pubsql);
+                stmt.execute(pubsql);**/
 
                 replacePunctuation(e.authors);
                 for(String auth: e.authors){
@@ -424,35 +482,16 @@ public class XmlData{
                 //System.out.println(e.editors.toString());
                 for(String auth: e.authors){
                     //replacePunctuation(auth);
-                    String article="Insert INTO pub_auth_relInfo VALUES ('" + replacePunctuation(e.title) + "'," +
+                    String article="Insert INTO pub_Info VALUES ('" + replacePunctuation(e.title) + "'," +
                             "'"+ e.mdate+ "','" + auth + "','"+e.authors+"','" + e.key + "'," +
                             "'" + replacePunctuation(e.editors) + "','" + e.pages + "'," +
                             "'" + replacePunctuation(e.ee) + "','" + e.url + "',"+e.year+"," +
-                            "'"+e.journal+"','"+e.book_title+"',"+e.volume+","+e.number+") ;";
+                            "'"+e.journal+"','"+e.book_title+"',"+e.volume+","+e.number+"," +
+                            "'"+e.publisher+"','"+e.isbn+"'," +
+                            "'"+e.series+"','"+e.cross_ref+"') ;";
                     stmt.execute(article);
 
                 }
-
-
-                //pubsql = "insert INTO `pub_info`(pub_year) VALUES (2005);"; (mdate,author,title)
-                // execute sql statement
-
-                /*PreparedStatement preparedStmt = conn.prepareStatement(sql);
-                preparedStmt.setString(1, e.mdate);
-                preparedStmt.setString(3, e.title);**/
-
-                // execute the preparedstatement
-                //preparedStmt.execute();
-                    /*
-                    System.out.println(e.mdate);
-                    System.out.println(e.authors.get(0));
-                    System.out.println(e.title);
-                    System.out.println("-----------------------");**/
-                //count++;
-                //System.out.println("asfasdfasdf"+count);
-
-                /***/
-
 
                 System.out.printf("Data %d is successfully inserted!\n",count);
             }
@@ -462,6 +501,7 @@ public class XmlData{
 
     }
     //To solve the problem that cannot insert string including single '.
+
 
     public static String replacePunctuation(String str) {
         if(str==null){

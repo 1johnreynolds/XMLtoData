@@ -1,14 +1,14 @@
 import java.util.Scanner;
 
 public class AnswerQuery {
-    private String chosenQuery;
-    private String queryA_AuthorName;
-    private String queryB_PaperName;
-    private String queryC_JournalName;
-    private String queryC_Year;
-    private String queryC_Issue;
-    private String queryD_ConferenceName;
-    private String queryD_Year;
+    private static String chosenQuery;
+    private static String queryA_AuthorName;
+    private static String queryB_PaperName;
+    private static String queryC_JournalName;
+    private static String queryC_Year;
+    private static String queryC_Issue;
+    private static String queryD_ConferenceName;
+    private static String queryD_Year;
 
     public String chosen() {
         return chosenQuery;
@@ -42,7 +42,7 @@ public class AnswerQuery {
         return queryD_Year;
     }
 
-    private void answerQueryA() {
+    private static void answerQueryA() {
         chosenQuery = "a";
 
         Scanner qaAuthorName = new Scanner(System.in);
@@ -54,7 +54,7 @@ public class AnswerQuery {
 //        returnQueryA_AuthorName();
     }
 
-    private void answerQueryB() {
+    private static void answerQueryB() {
         chosenQuery = "b";
         Scanner qbPaperName = new Scanner(System.in);
         System.out.print("Please tell me the paper name: ");
@@ -64,7 +64,7 @@ public class AnswerQuery {
         queryB_PaperName = paperName;
     }
 
-    private void answerQueryC() {
+    private static void answerQueryC() {
         chosenQuery = "c";
         Scanner qcJournalName = new Scanner(System.in);
         System.out.print("Please tell me the journal name: ");
@@ -86,7 +86,7 @@ public class AnswerQuery {
         queryC_Issue = issue;
     }
 
-    private void answerQueryD() {
+    private static void answerQueryD() {
         chosenQuery = "d";
         Scanner qdConferenceName = new Scanner(System.in);
         System.out.print("Please tell me the conference name: ");
@@ -103,7 +103,6 @@ public class AnswerQuery {
     }
 
     private void answerQueryEx() {
-        chosenQuery = "ex";
         System.out.println("Query a: ");
         answerQueryA();
         System.out.println();
@@ -120,23 +119,24 @@ public class AnswerQuery {
         answerQueryD();
         System.out.println();
     }
+    private static void answerQueryQ() {
+        chosenQuery = "q";
+    }
 
     public AnswerQuery() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Which query do you want to choose?");
-        System.out.println("1.3.1 Given author name A, list all of her co-authors\n" +
-                "1.3.2 Given a paper name, list its publication metadata\n" +
-                "1.3.3 Given a journal name, a year (volume) and an issue (number), find out the metadata of all the papers published in the book\n" +
-                "1.4.3 Given a conference name and a year, find out the metadata of all the papers published in the book");
         System.out.println("Please choose: ");
-        System.out.println("a. 1.3.1\n" +
-                "b. 1.3.2\n" +
-                "c. 1.3.3\n" +
-                "d. 1.3.4\n" +
-                "ex. do query a to d in turn");
+        System.out.println("a. 1.3.1 Given author name A, list all of her co-authors\n" +
+                "b. 1.3.2 Given a paper name, list its publication metadata\n" +
+                "c. 1.3.3 Given a journal name, a year (volume) and an issue (number), find out the metadata of all the papers published in the book\n" +
+                "d. 1.3.4 Given a conference name and a year, find out the metadata of all the papers published in the book\n" +
+                "q. Quit the queries:\n");
 
         String chosen = sc.nextLine();
-        System.out.println("You have chosen query " + chosen);
+        if(!chosen.equals("q")){
+            System.out.println("You have chosen query " + chosen);
+        }
         if (chosen.equals("a")) {
             answerQueryA();
         } else if (chosen.equals("b")) {
@@ -145,10 +145,41 @@ public class AnswerQuery {
             answerQueryC();
         } else if (chosen.equals("d")) {
             answerQueryD();
-        } else if (chosen.equals("ex")) {
-            answerQueryEx();
+        } else if (chosen.equals("q")) {
+            answerQueryQ();
+            System.out.println("Quit the queries successfully!");
         } else {
-            System.out.println("Sorry, this query is not applicable");
+            System.out.println("Sorry, this query is not applicable!Please check your Input!It is case and space sensitive.");
+        }
+    }
+    public static void nextQuery() {
+        Scanner sc = new Scanner(System.in);
+        //System.out.println("---------------------------------------");
+        System.out.println("Which query do you want to choose?");
+        System.out.println("Please choose: ");
+        System.out.println("a. 1.3.1 Given author name A, list all of her co-authors\n" +
+                "b. 1.3.2 Given a paper name, list its publication metadata\n" +
+                "c. 1.3.3 Given a journal name, a year (volume) and an issue (number), find out the metadata of all the papers published in the book\n" +
+                "d. 1.3.4 Given a conference name and a year, find out the metadata of all the papers published in the book\n" +
+                "q. Quit the queries:\n");
+
+        String chosen = sc.nextLine();
+        if(!chosen.equals("q")){
+            System.out.println("You have chosen query " + chosen);
+        }
+        if (chosen.equals("a")) {
+            answerQueryA();
+        } else if (chosen.equals("b")) {
+            answerQueryB();
+        } else if (chosen.equals("c")) {
+            answerQueryC();
+        } else if (chosen.equals("d")) {
+            answerQueryD();
+        } else if (chosen.equals("q")) {
+            answerQueryQ();
+            System.out.println("Quit the queries successfully!");
+        } else {
+            System.out.println("Sorry, this query is not applicable!Please check your Input!It is case and space sensitive.");
         }
     }
 }

@@ -1,8 +1,11 @@
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
@@ -32,14 +35,28 @@ import com.saxonica.xqj.SaxonXQDataSource;
  */
 public class XmlData{
 
-
     // MySQL 8.0 version or lower - JDBC Driver and Database URL
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/CS7340TEAMONELABONE";
+    static String JDBC_DRIVER;
+    static String DB_URL;
 
     // set up user name and password of DB
-    static final String USER = "root";
-    static final String PASS = "";
+    static String USER;
+    static String PASS;
+
+    public static void configureProp() throws IOException {
+        //Handles the config.properties file from location in project
+        FileInputStream fis = new FileInputStream("resources/config.properties");
+        //Initializes Properties to read in properties from config.properties
+        Properties prop = new Properties();
+        //Loads properties from file.
+        prop.load(fis);
+        //Assigns value in config.properties to the values below.
+        JDBC_DRIVER = prop.getProperty("JDBC_DRIVER");
+        DB_URL = prop.getProperty("DB_URL");
+        USER = prop.getProperty("USER");
+        PASS = prop.getProperty("PASS");
+
+    }
 
     /**
      * Set up connection for MySQL DB
@@ -261,7 +278,7 @@ public class XmlData{
                 } else {
                     System.out.println("Please check your Input!It is case and space sensitive.");
                 }
-                aq.nextQuery();
+                AnswerQuery.nextQuery();
             }
 
 
@@ -603,14 +620,15 @@ public class XmlData{
             System.out.println(result.getItemAsString(null));
         }
     }
-    public static void main(String[] args) throws SQLException {
-        //conDB();
-        try{
-            int questionNum = 1; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
-            execute(questionNum);
-        }
-        catch (XQException e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws SQLException, IOException {
+        configureProp();
+        conDB();
+//            try{
+//                int questionNum = 1; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+//                execute(questionNum);
+//            }
+//            catch (XQException e) {
+//                e.printStackTrace();
+//            }
     }
 }

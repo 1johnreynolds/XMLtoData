@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -5,6 +6,14 @@ import java.util.List;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+
+import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQDataSource;
+import javax.xml.xquery.XQException;
+import javax.xml.xquery.XQPreparedExpression;
+import javax.xml.xquery.XQResultSequence;
+
+import com.saxonica.xqj.SaxonXQDataSource;
 
 /**
  * File Name: XmlData.java
@@ -291,8 +300,6 @@ public class XmlData{
      *
      * @throws SQLException if there is an SQL error, fetch the error and print it out in terminal
      */
-
-
     public static void createTB(Statement stmt) throws SQLException{
         /*String createpub = "CREATE TABLE `pub_info` (\n" +
                 "  PUB_YEAR INT DEFAULT 0000,\n" + // api id is primary key
@@ -500,9 +507,15 @@ public class XmlData{
         }
 
     }
-    //To solve the problem that cannot insert string including single '.
 
-
+    /**
+     * To solve the problem that cannot insert string including single quote'
+     *
+     * <p>Change the element from invalid which contains single quote to two single quote which my solve sql error</p>
+     *
+     * @param str a statement element which may contains single quote '
+     * @return str a valid statement element which replace single quote into two single quote
+     * */
     public static String replacePunctuation(String str) {
         if(str==null){
             return str;
@@ -517,8 +530,14 @@ public class XmlData{
         return str;
     }
 
-
-
+    /**
+     * To solve the problem that cannot insert string including single quote'
+     *
+     * <p>Change the elements from invalid which contains single quote to two single quote which my solve sql error</p>
+     *
+     * @param str a list of statement elements which may contains single quote '
+     * @return str a list of valid statement element which replace single quote into two single quote
+     * */
     public static List<String> replacePunctuation(List<String> str) {
         String returnStr = "";
         for(String s: str) {
@@ -529,7 +548,60 @@ public class XmlData{
         return str;
     }
 
+    /**
+     * XQuery statement selection
+     *
+     * <p> Pass an integer to help user select which XQuery he wants</p>
+     *
+     * @param questionNum a XQuery statement index selector
+     * @return str a valid statement element which replace single quote into two single quote
+     * */
+    public static String XQueryStatement(int questionNum){
+        String res;
+        if(questionNum == 1){
+            res = "for $x in doc(\"src/dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "where $x/year>2000\n" +
+                    "return $x/title";
+        }else if(questionNum ==2){
+            res = "for $x in doc(\"src/dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "where $x/year>2000\n" +
+                    "return $x/author";
+        }else {
+            res = "error";
+        }
+        return res;
+    }
+
+    /**
+     * Execute XQuery engine and do the XQuery statement.
+     *
+     * <p>Set up a XQuery object engine then use @XQueryStatement get the XQuery statement
+     * and show the result.</p>
+     *
+     * @param questionNum a XQuery statement index selector for lab 2 part questions
+     * @throws XQException deal with the error when the XQuery is executed
+     */
+    private static void execute(int questionNum) throws XQException{
+        //InputStream inputStream = new FileInputStream(new File("books.xqy"));
+
+        XQDataSource ds = new SaxonXQDataSource();
+        XQConnection conn = ds.getConnection();
+
+        XQPreparedExpression exp = conn.prepareExpression(XQueryStatement(questionNum));
+        XQResultSequence result = exp.executeQuery();
+
+        while (result.next()) {
+            System.out.println(result.getItemAsString(null));
+        }
+    }
     public static void main(String[] args) throws SQLException {
-        conDB();
+        //conDB();
+        try{
+            int questionNum = 2; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            execute(questionNum);
+        }
+        catch (XQException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,5 +1,4 @@
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -92,7 +91,7 @@ public class XmlData{
             // parse the XML file
             //DropTB(stmt);
             //createTB(stmt);
-            parseXML(stmt);
+            //parseXML(stmt);
             AnswerQuery aq = new AnswerQuery();
             while(!aq.chosen().equals("q")) {
                 if (aq.chosen().equals("a")) {
@@ -275,6 +274,18 @@ public class XmlData{
                         //coAuthors.add(author);
                     }
                     rs.close();
+                } else if (aq.chosen().equals("e")) {
+                    System.out.println("---------------------------------------");
+                    part2(1);
+                } else if (aq.chosen().equals("f")) {
+                    System.out.println("---------------------------------------");
+                    part2(2);
+                } else if (aq.chosen().equals("g")) {
+                    System.out.println("---------------------------------------");
+                    part2(3);
+                } else if (aq.chosen().equals("h")) {
+                    System.out.println("---------------------------------------");
+                    part2(4);
                 } else {
                     System.out.println("Please check your Input!It is case and space sensitive.");
                 }
@@ -498,7 +509,7 @@ public class XmlData{
                 replacePunctuation(e.authors);
                 for(String auth: e.authors){
                     //replacePunctuation(auth);
-                    String authsql="Insert INTO auth_info VALUES ('"+auth+"') " +
+                    String authsql="Insert INTO  auth_info VALUES ('"+auth+"') " +
                             "ON duplicate KEY UPDATE author = author;";
                     stmt.execute(authsql);
 
@@ -576,28 +587,37 @@ public class XmlData{
      * */
     public static String XQueryStatement(int questionNum){
         String res;
-        if(questionNum == 1){
-            res = "for $x in doc(\"src/dblp-soc-papers.xml\")/dblp/inproceedings\n" +
-                    "where $x/year>2000\n" +
-                    "return $x/title";
-        }else if(questionNum ==2){
-            res = "for $x in doc(\"src/dblp-soc-papers.xml\")/dblp/inproceedings\n" +
-                    "where $x/year>2000\n" +
-                    "return $x/author";
+        if (questionNum == 1) {
+            res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                            "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+                            "return\n" +
+                            "<articles>\n" +
+                            "{for $x in $inproceedings\n" +
+                            "return $x/title}\n" +
+                            "{for $y in $article\n" +
+                            "return $y/title}\n" +
+                            "</articles>";
+        } else if (questionNum == 2) {
+            res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+                    "return\n" +
+                    "<articles>\n" +
+                    "{for $x in $inproceedings\n" +
+                    "where $x/author='Jia Zhang' and $x/year=2018\n" +
+                    "return $x/title}\n" +
+                    "{for $y in $article\n" +
+                    "where $y/author='Jia Zhang' and $y/year=2018\n" +
+                    "return $y/title}\n" +
+                    "</articles>";
         }else if(questionNum == 3) {
             res = "Query 3";
-
-        }else if(questionNum == 4) {
-            res = "Query 4";
-
         }else{
-
             res = "error";
-
         }
         return res;
     }
 
+    public static String Q4(int questionNum){
     /**
      * Execute XQuery engine and do the XQuery statement.
      *
@@ -620,15 +640,31 @@ public class XmlData{
             System.out.println(result.getItemAsString(null));
         }
     }
+
+    public static void part2(int num){
+        try{
+            int questionNum = num; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            execute(questionNum);
+        }
+        catch (XQException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void part2(String name){
+        try{
+            int questionNum = 4; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            execute(questionNum);
+        }
+        catch (XQException e) {
+            e.printStackTrace();
+        }
+
+    }
     public static void main(String[] args) throws SQLException, IOException {
         configureProp();
         conDB();
-//            try{
-//                int questionNum = 1; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
-//                execute(questionNum);
-//            }
-//            catch (XQException e) {
-//                e.printStackTrace();
-//            }
+
     }
 }

@@ -1,10 +1,6 @@
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
@@ -285,7 +281,7 @@ public class XmlData{
                     part2(3);
                 } else if (aq.chosen().equals("h")) {
                     System.out.println("---------------------------------------");
-                    part2(4);
+                    part2(aq.returnQueryH_PaperName());
                 } else {
                     System.out.println("Please check your Input!It is case and space sensitive.");
                 }
@@ -617,7 +613,84 @@ public class XmlData{
         return res;
     }
 
-    public static String Q4(int questionNum){
+    public static String Q3(String xqyname){
+        String res;
+        if(xqyname=="inproceedings"){
+            res="let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+            "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
+            "let $authors2 := fn:distinct-values($article/author)\n" +
+            "for $a in $authors1\n" +
+            "let $count := fn:count($inproceedings[author = $a])\n" +
+            "order by $count\n" +
+            "where $count>10\n" +
+            "return <result>{$a}</result>";
+         return res;
+        }
+        else if(xqyname=="articles"){
+            res="let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+                    "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
+                    "let $authors2 := fn:distinct-values($article/author)\n" +
+                    "for $b in $authors2\n" +
+                    "let $count := fn:count($article[author = $b])\n" +
+                    "order by $count\n" +
+                    "where $count>10\n" +
+                    "return <result>{$b}</result>";
+            return res;
+        }
+        else{
+            res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+                    "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
+                    "let $authors2 := fn:distinct-values($article/author)\n" +
+
+                    "for $a0 in $authors1\n" +
+                    "let $count01 := fn:count($inproceedings[author = $a0])\n" +
+                    "let $position01 := index-of($authors1, $a0)\n" +
+                    "order by $count01\n" +
+                    "return\n" +
+                    "<result>\n" +
+                    "{\n" +
+                    "for $b0 in $authors2\n" +
+                    "let $count02 := fn:count($article[author = $b0])\n" +
+                    "let $position02 := index-of($authors2, $b0)\n" +
+                    "where $a0 = $b0 and $count01 + $count02 > 10\n" +
+                    "(:let $count0 := $count01 + $count02\n" +
+                    "let $authors1 := remove($authors1, $position01)\n" +
+                    "let $authors2 := remove($authors2, $position02):)\n" +
+                    "return string($a0)\n" +
+                    "}</result>";
+            return res;
+        }
+    }
+
+    public static String Q4(String papername){
+        String res;
+        res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+                "return\n" +
+
+                "<metadata>\n" +
+                "{for $x in $inproceedings\n" +
+                "where $x/title='"+replacePunctuation(papername)+"'\n" +
+                "return\n" +
+                "<InproceedingsMetadata>\n" +
+                "{($x/title, $x/author,$x/pages,$x/year,$x/booktitle,$x/ee,$x/crossref,$x/url)}\n" +
+                "</InproceedingsMetadata>\n" +
+                "}\n" +
+
+                " {for $y in $article\n" +
+                "where $y/title='"+replacePunctuation(papername)+"'\n" +
+                "return\n" +
+                "<ArticlesMetadata>\n" +
+                "{($y/title, $y/author,$y/pages,$y/year,$y/volume,$y/number,$y/journal,$y/ee,$y/url)}\n" +
+                "</ArticlesMetadata>\n" +
+                "}\n" +
+                "</metadata>";
+
+        return res;
+    }
     /**
      * Execute XQuery engine and do the XQuery statement.
      *
@@ -641,21 +714,80 @@ public class XmlData{
         }
     }
 
+    private static void execute(String state) throws XQException{
+        //InputStream inputStream = new FileInputStream(new File("books.xqy"));
+        XQDataSource ds = new SaxonXQDataSource();
+        XQConnection conn = ds.getConnection();
+
+        XQPreparedExpression exp = conn.prepareExpression(state);
+        XQResultSequence result = exp.executeQuery();
+
+        while (result.next()) {
+            System.out.println(result.getItemAsString(null));
+        }
+    }
+
+    private static XQResultSequence executeQ3WithReturn(String state) throws FileNotFoundException, XQException {
+        XQDataSource ds = new SaxonXQDataSource();
+        XQConnection conn = ds.getConnection();
+        XQPreparedExpression exp = conn.prepareExpression(state);
+        XQResultSequence result = exp.executeQuery();
+
+        return result;
+    }
+
+    private static void executeQuery3() throws IOException, XQException {
+        HashSet<String> set = new HashSet<>();
+        XQResultSequence result1 = executeQ3WithReturn(Q3("inproceedings"));
+
+        while (result1.next()) {
+            set.add(result1.getItemAsString(null).trim());
+        }
+        System.out.println(set.size());
+
+        XQResultSequence result2 = executeQ3WithReturn(Q3("articles"));
+
+        while (result2.next()) {
+            set.add(result2.getItemAsString(null).trim());
+        }
+        System.out.println(set.size());
+
+        XQResultSequence result3 = executeQ3WithReturn(Q3("both"));
+
+        while (result3.next()) {
+            String cur = result3.getItemAsString(null).trim();
+            if (cur.equals("<result/>"))
+                continue;
+            else
+                set.add(cur);
+        }
+
+        System.out.println(set.size());
+        for (String t : set) {
+            System.out.println("author name: " + t);
+        }
+    }
+
     public static void part2(int num){
         try{
-            int questionNum = num; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
-            execute(questionNum);
+            if(num==3){
+                executeQuery3();
+                return;
+            }
+             // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            execute(num);
         }
-        catch (XQException e) {
+        catch (XQException | IOException e) {
             e.printStackTrace();
         }
 
     }
 
+
+
     public static void part2(String name){
-        try{
-            int questionNum = 4; // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
-            execute(questionNum);
+        try{// Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            execute(Q4(name));
         }
         catch (XQException e) {
             e.printStackTrace();

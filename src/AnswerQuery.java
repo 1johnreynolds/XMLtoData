@@ -43,7 +43,7 @@ public class AnswerQuery {
         return queryD_Year;
     }
 
-    public String returnQueryH_Year() {
+    public String returnQueryH_PaperName() {
         return queryH_PaperName;
     }
 
@@ -180,8 +180,8 @@ public class AnswerQuery {
             answerQueryF();
         } else if (chosen.equals("g")) {
             answerQueryG();
-        } else if (chosen.equals("g")) {
-            answerQueryG();
+        } else if (chosen.equals("h")) {
+            answerQueryH();
         } else if (chosen.equals("q")) {
             answerQueryQ();
             System.out.println("Quit the queries successfully!");
@@ -222,8 +222,8 @@ public class AnswerQuery {
             answerQueryF();
         } else if (chosen.equals("g")) {
             answerQueryG();
-        } else if (chosen.equals("g")) {
-            answerQueryG();
+        } else if (chosen.equals("h")) {
+            answerQueryH();
         } else if (chosen.equals("q")) {
             answerQueryQ();
             System.out.println("Quit the queries successfully!");

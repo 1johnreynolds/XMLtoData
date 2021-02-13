@@ -26,21 +26,36 @@ Java Version: 1.8.0_211
 
 2. Set up Configuration
 2.1 Change MySQL DB configuration:
-open XmlData.java file,
-line 27 // change JDBC driver name
-line 28 // change JDBC URL, you can set up your own schema name
-line 31 // change JDBC username
-line 32 // change JDBC password
+(1) First open the project by IntelliJ IDEA
+File -> Open -> Select the Project File Name: XMLtoData then open it.
+Check the left bar Project and get the project file structure.
+
+(2) Open config.properties file under the path: ./XMLtoData/resources
+Set up MySQL DB Schema name, it should have a schema at first
+- JDBC_DRIVER = com.mysql.cj.jdbc.Driver
+- DB_URL = jdbc:mysql://localhost:3306/CS7340TEAMONELABONE
+
+Set up user name and password of DB
+- USER = root
+- PASS = 123321123 // your DB password
+
+2.2 Set up project Structure
+File -> Project Setting:
+-> Project:
+  Module SDK 1.8 (Java Version 1.8.0_211)
+  Project Language Level: SDK Default 8
+  Project Compiler Output: ./Service-Oriented Computing /Lab1/CS7340Lab1/XMLtoData/out
+-> Modules:
+  Dependencies: Please add external jar file: ./XMLtoData/lib, then apply it
+  Paths: Use Module Compile Output Path
 
 
 3. Execution
-open your terminal and go into the project directory. (ex. $cd Desktop/XMLtoData)
-then: $cd out/production/XMLtoData
-Now it is under the class directory.
+(1) Open ./src/XMLData.java file
+(2) Run this file at main() function
 
-Then execute $java -cp .:mysql-connector-java-8.0.23.jar XmlData
 
-Now it should be display the options.
+Now it should create DB tables and upload data into it. Then it will display the options:
 
 Which query do you want to choose?
 1.3.1 Given author name A, list all of her co-authors

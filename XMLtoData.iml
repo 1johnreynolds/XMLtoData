@@ -28,6 +28,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="mysql-connector-java-8.0.23" level="project" />
+    <orderEntry type="library" exported="" name="mysql-connector-java-8.0.23" level="project" />
   </component>
 </module>

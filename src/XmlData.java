@@ -82,12 +82,12 @@ public class XmlData{
             stmt = conn.createStatement();
 
             // please operate createTable(stmt) first time, it create three tables, workflow_metadata, workflow_api and api_info
-            // createTB(stmt);
+            createTB(stmt);
 
             // parse the XML file
             //DropTB(stmt);
             //createTB(stmt);
-            //parseXML(stmt);
+            parseXML(stmt);
             AnswerQuery aq = new AnswerQuery();
             while(!aq.chosen().equals("q")) {
                 if (aq.chosen().equals("a")) {

@@ -126,15 +126,16 @@ public class XmlData{
 
                 } else if (aq.chosen().equals("b")) {
                     String sql_1_3_2;
-                    sql_1_3_2 = "Select distinct(title), author_list, mdate,article_key,editors,pages,author_list,EE,url,pub_year,journal,book_title,volume,pub_number," +
-                            "publisher,ISBN,Series,CROSS_REF" +
-                            " from pub_info where " +
-                            "(journal in (select journal from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
-                            "and book_title in (select book_title from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
-                            "and  pub_year in (select pub_year from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
-                            "and volume in (select volume from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
-                            "and pub_number in (select pub_number  from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "'));";
-                    //sql_1_3_2 = "select * from pub_info where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+"'";
+//                    sql_1_3_2 = "Select distinct(title), author_list, mdate,article_key,editors,pages,author_list,EE,url,pub_year,journal,book_title,volume,pub_number," +
+//                            "publisher,ISBN,Series,CROSS_REF" +
+//                            " from pub_info where " +
+//                            "(journal in (select journal from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+//                            "and book_title in (select book_title from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+//                            "and  pub_year in (select pub_year from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+//                            "and volume in (select volume from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
+                    //"and pub_number in (select pub_number  from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "'));";
+                    sql_1_3_2 = "select * from pub_info where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+ "' \n" +
+                    "limit 1;";
                     ResultSet rs = stmt.executeQuery(sql_1_3_2);
                     HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
                     List<String> coAuthors = new ArrayList<String>();
@@ -743,14 +744,14 @@ public class XmlData{
         while (result1.next()) {
             set.add(result1.getItemAsString(null).trim());
         }
-        System.out.println(set.size());
+        //System.out.println(set.size());
 
         XQResultSequence result2 = executeQ3WithReturn(Q3("articles"));
 
         while (result2.next()) {
             set.add(result2.getItemAsString(null).trim());
         }
-        System.out.println(set.size());
+        //System.out.println(set.size());
 
         XQResultSequence result3 = executeQ3WithReturn(Q3("both"));
 
@@ -762,7 +763,7 @@ public class XmlData{
                 set.add(cur);
         }
 
-        System.out.println(set.size());
+        //System.out.println(set.size());
         for (String t : set) {
             System.out.println("author name: " + t);
         }

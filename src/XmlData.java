@@ -21,7 +21,7 @@ import com.saxonica.xqj.SaxonXQDataSource;
  * <p>In this class, it mainly has two part, first part is parsing XML file which is publication information from dblp-spc-papers.xml
  * The XML file record the paper information including author, mdate, title, page and etc in recent year.
  * After we parse these file, then we extract all info from XML and save it into Publication class.
- * Then according to different attribute, we create a MySQL DB and create 3 tables: pub_info, auth_info, pub_info
+ * Then according to different attribute, we create a MySQL DB and create 2 tables: auth_info, pub_Info.
  * Then we finish the SQL queries from Dr. Zhang requirments in MySQL.</p>
  *
  * @author Beichen Hu, Jiachen Tang, Jianyu Shen, John Reynolds
@@ -301,10 +301,9 @@ public class XmlData{
      * Create tables for MySQL
      *
      * <p> At here, we can create our tables by using MySQL statement.
-     * We would like to create 3 tables, pub_info, auth_info and pub_info
-     * table 1: pub_info has primary key: pid which represent publication id
-     * table 2: auth_info has primary key: aid which represent author id
-     * table 3: Then we use table 3, pub_info, to connect table1 and table2 according to their relations
+     * We would like to create 2 tables, auth_info and pub_info
+     * table 1: auth_info has primary key: author
+     * table 2: pub_info has primary key: title, url, mdate and author are used together
      * </p>
      *
      * @throws SQLException if there is an SQL error, fetch the error and print it out in terminal
@@ -312,19 +311,19 @@ public class XmlData{
     public static void createTB(Statement stmt) throws SQLException{
 
         String createauth = "CREATE TABLE auth_info (\n" +
-                "  AUTHOR VARCHAR(100),\n" + // api id is primary key
-                "  PRIMARY KEY(AUTHOR)\n" +
+                "  AUTHOR VARCHAR(100),\n" + 
+                "  PRIMARY KEY(AUTHOR)\n" + // author is primary key
                 ") ENGINE=InnoDB;";
         stmt.execute(createauth);
 
         String createarticle = "CREATE TABLE pub_Info(\n" +
-                "TITLE VARCHAR (250)NOT NULL DEFAULT '',\n" + // api id is primary key
+                "TITLE VARCHAR (250)NOT NULL DEFAULT '',\n" + 
                 "MDATE VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "AUTHOR VARCHAR(100)NOT NULL DEFAULT '',\n" +
                 "AUTHOR_LIST VARCHAR(250)NOT NULL DEFAULT '',\n" +
                 "ARTICLE_KEY VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "EDITORS VARCHAR(100)NOT NULL DEFAULT '',\n" +
-                "PAGES VARCHAR(50) NOT NULL DEFAULT '',\n" + // api id is primary key
+                "PAGES VARCHAR(50) NOT NULL DEFAULT '',\n" + 
                 "EE VARCHAR(200) NOT NULL DEFAULT '',\n" +
                 "URL VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "PUB_YEAR INT DEFAULT 0000,\n" +
@@ -333,11 +332,11 @@ public class XmlData{
                 "VOLUME INT NOT NULL DEFAULT 0,\n" +
                 "PUB_NUMBER INT NOT NULL DEFAULT 0,\n" +
                 "PUBLISHER VARCHAR(100) NOT NULL DEFAULT '',\n" +
-                "ISBN VARCHAR(50) NOT NULL DEFAULT '',\n" + // api id is primary key
+                "ISBN VARCHAR(50) NOT NULL DEFAULT '',\n" + 
                 "SERIES VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "CROSS_REF VARCHAR(100) NOT NULL DEFAULT '',\n" +
                 "foreign key(AUTHOR) references auth_info(AUTHOR),\n" +
-                "Primary key(TITLE,URl,MDATE,AUTHOR)" +
+                "Primary key(TITLE,URl,MDATE,AUTHOR)" + // title, url, mdate and author are all used as primary key
                 ") ENGINE=InnoDB;";
 
         stmt.execute(createarticle);

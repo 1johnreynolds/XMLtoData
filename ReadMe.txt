@@ -18,6 +18,7 @@ Cores: 8
 MySQL Workbench 8.0 Version: 8.0.17
 JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 DB_URL = "jdbc:mysql://localhost:3306/test";
+//These values can be updated to match your database in config.properties noted later.
 DB_USER = "root";
 DB_PASSWORD = "123321123";
 

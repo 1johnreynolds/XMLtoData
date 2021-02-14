@@ -86,8 +86,8 @@ public class XmlData {
             // createTB(stmt);
 
             // parse the XML file
-            // createTB(stmt);
-            // parseXML(stmt);
+            createTB(stmt);
+            parseXML(stmt);
             AnswerQuery aq = new AnswerQuery();
             while (!aq.chosen().equals("q")) {
                 if (aq.chosen().equals("a")) {

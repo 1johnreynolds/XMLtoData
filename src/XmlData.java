@@ -3,6 +3,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.w3c.dom.*;
+
 import javax.xml.parsers.*;
 
 import javax.xml.xquery.XQConnection;
@@ -15,7 +16,7 @@ import com.saxonica.xqj.SaxonXQDataSource;
 
 /**
  * File Name: XmlData.java
- *
+ * <p>
  * Parse XML file and upload info into MySQL DB
  *
  * <p>In this class, it mainly has two part, first part is parsing XML file which is publication information from dblp-spc-papers.xml
@@ -24,11 +25,11 @@ import com.saxonica.xqj.SaxonXQDataSource;
  * Then according to different attribute, we create a MySQL DB and create 3 tables: pub_info, auth_info, pub_info
  * Then we finish the SQL queries from Dr. Zhang requirments in MySQL.</p>
  *
- * @author Beichen Hu, John Reynolds
+ * @author Beichen Hu, Jiachen Tang, Jianyu Shen, John Reynolds
  * @date Feb 5th, 2021
  * @since 1.0
  */
-public class XmlData{
+public class XmlData {
 
     // MySQL 8.0 version or lower - JDBC Driver and Database URL
     static String JDBC_DRIVER;
@@ -69,30 +70,29 @@ public class XmlData{
         Connection conn = null;
         // initialize a sql statement to execute SQL query
         Statement stmt = null;
-        try{
+        try {
             // sign up for DB driver
             Class.forName(JDBC_DRIVER);
 
             // open links
             System.out.println("Connecting to Database...");
-            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
             // operate query
             System.out.println("Instantiate the Statement object...");
             stmt = conn.createStatement();
 
             // please operate createTable(stmt) first time, it create three tables, workflow_metadata, workflow_api and api_info
-            createTB(stmt);
+            // createTB(stmt);
 
             // parse the XML file
-            //DropTB(stmt);
-            //createTB(stmt);
-            parseXML(stmt);
+            // createTB(stmt);
+            // parseXML(stmt);
             AnswerQuery aq = new AnswerQuery();
-            while(!aq.chosen().equals("q")) {
+            while (!aq.chosen().equals("q")) {
                 if (aq.chosen().equals("a")) {
                     String sql_1_3_1;
-                    sql_1_3_1 ="Select Distinct (author) from pub_Info where title in" +
+                    sql_1_3_1 = "Select Distinct (author) from pub_Info where title in" +
                             "(select title from pub_Info where author='" + aq.returnQueryA_AuthorName() + "') \n" +
                             "and mdate in(select mdate from pub_Info where author='" +
                             aq.returnQueryA_AuthorName() +
@@ -117,7 +117,6 @@ public class XmlData{
                         System.out.println();
                         System.out.println("---------------------------------------");
                         System.out.println();
-//                    System.out.println(coAuthors);
                     } else {
                         System.out.println("Cannot find co-authors for given author.");
                     }
@@ -133,9 +132,9 @@ public class XmlData{
 //                            "and book_title in (select book_title from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
 //                            "and  pub_year in (select pub_year from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
 //                            "and volume in (select volume from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "') \n" +
-                    //"and pub_number in (select pub_number  from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "'));";
-                    sql_1_3_2 = "select * from pub_info where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+ "' \n" +
-                    "limit 1;";
+//                            "and pub_number in (select pub_number  from pub_info where title='" + replacePunctuation(aq.returnQueryB_PaperName()) + "'));";
+                    sql_1_3_2 = "select * from pub_info where title = '" + replacePunctuation(aq.returnQueryB_PaperName()) + "' \n" +
+                            "limit 1;";
                     ResultSet rs = stmt.executeQuery(sql_1_3_2);
                     HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
                     List<String> coAuthors = new ArrayList<String>();
@@ -153,43 +152,42 @@ public class XmlData{
                         String book_title = rs.getString("book_title");
                         int volume = rs.getInt("volume");
                         int pub_number = rs.getInt("pub_number");
-                        String publisher=rs.getString("publisher");
-                        String ISBN=rs.getString("ISBN");
-                        String Series=rs.getString("Series");
-                        String CROSS_REF=rs.getString("CROSS_REF");
+                        String publisher = rs.getString("publisher");
+                        String ISBN = rs.getString("ISBN");
+                        String Series = rs.getString("Series");
+                        String CROSS_REF = rs.getString("CROSS_REF");
 
                         // output data into terminal
                         System.out.println("Title: " + title);
-                        System.out.println(", Mdate: " + mdate);
-                        System.out.println(", Author: " + author_list);
-                        System.out.println(", Key: " + article_key);
-                        System.out.println(", Editors: " + editors);
-                        System.out.println(", Pages: " + pages);
-                        System.out.println(", EE: " + ee);
-                        System.out.println(", URL: " + url);
-                        System.out.println(", Pub_year: " + pub_year);
-                        System.out.println(", Journal: " + journal);
-                        System.out.println(", Book_title: " + book_title);
-                        System.out.println(", Volume: " + volume);
-                        System.out.println(", Pub_number: " + pub_number);
-                        System.out.println(", Publisher: " + publisher);
-                        System.out.println(", ISBN: " + ISBN);
-                        System.out.println(", Series: " + Series);
-                        System.out.println(", CROSS_REF: " + CROSS_REF);
+                        System.out.println("Mdate: " + mdate);
+                        System.out.println("Author: " + author_list);
+                        System.out.println("Key: " + article_key);
+                        System.out.println("Editors: " + editors);
+                        System.out.println("Pages: " + pages);
+                        System.out.println("EE: " + ee);
+                        System.out.println("URL: " + url);
+                        System.out.println("Pub_year: " + pub_year);
+                        System.out.println("Journal: " + journal);
+                        System.out.println("Book_title: " + book_title);
+                        System.out.println("Volume: " + volume);
+                        System.out.println("Pub_number: " + pub_number);
+                        System.out.println("Publisher: " + publisher);
+                        System.out.println("ISBN: " + ISBN);
+                        System.out.println("Series: " + Series);
+                        System.out.println("CROSS_REF: " + CROSS_REF);
                         System.out.println("---------------------------------------");
                         System.out.println();
-                        //coAuthors.add(author);
+                        // coAuthors.add(author);
                     }
                     rs.close();
                 } else if (aq.chosen().equals("c")) {
-                    //
                     String sql_1_3_3;
                     sql_1_3_3 = "Select distinct(title), author_list, mdate,article_key,editors,pages, author_list,EE,url,pub_year,journal,volume,pub_number" +
                             " from pub_Info where " +
                             "journal='" + replacePunctuation(aq.returnQueryC_JournalName()) + "' \n" +
                             "and volume=" + aq.returnQueryC_Year() + " \n" +
                             "and  pub_number=" + aq.returnQueryC_Issue() + ";";
-                    //sql_1_3_2 = "select * from pub_info where title = '"+replacePunctuation(aq.returnQueryB_PaperName())+"'";
+
                     ResultSet rs = stmt.executeQuery(sql_1_3_3);
                     HashMap<String, List<String>> coAuthorsMap = new HashMap<>();
                     List<String> coAuthors = new ArrayList<String>();
@@ -204,32 +202,32 @@ public class XmlData{
                         String url = rs.getString("url");
                         int pub_year = rs.getInt("pub_year");
                         String journal = rs.getString("journal");
-                        //String book_title = rs.getString("book_title");
+                        // String book_title = rs.getString("book_title");
                         int volume = rs.getInt("volume");
                         int pub_number = rs.getInt("pub_number");
 
                         // output data into terminal
                         System.out.println("Title: " + title);
-                        System.out.println(", Mdate: " + mdate);
-                        System.out.println(", Author: " + author_list);
-                        System.out.println(", Article_key: " + article_key);
-                        System.out.println(", Editors: " + editors);
-                        System.out.println(", Pages: " + pages);
-                        System.out.println(", EE: " + ee);
-                        System.out.println(", URL: " + url);
-                        System.out.println(", Pub_year: " + pub_year);
-                        System.out.println(", Journal: " + journal);
-                        //System.out.println(", Book_title: " + book_title);
-                        System.out.println(", Volume: " + volume);
-                        System.out.println(", Pub_number: " + pub_number);
+                        System.out.println("Mdate: " + mdate);
+                        System.out.println("Author: " + author_list);
+                        System.out.println("Article_key: " + article_key);
+                        System.out.println("Editors: " + editors);
+                        System.out.println("Pages: " + pages);
+                        System.out.println("EE: " + ee);
+                        System.out.println("URL: " + url);
+                        System.out.println("Pub_year: " + pub_year);
+                        System.out.println("Journal: " + journal);
+                        // System.out.println("Book_title: " + book_title);
+                        System.out.println("Volume: " + volume);
+                        System.out.println("Pub_number: " + pub_number);
                         System.out.println("---------------------------------------");
                         System.out.println();
-                        //coAuthors.add(author);
+                        // coAuthors.add(author);
                     }
                     rs.close();
                 } else if (aq.chosen().equals("d")) {
                     String sql_1_3_4;
-                    /* 1.3.1 Given a paper name, list its publication metadata, including paper title, all co-authors, publication channel (e.g., conference, journal, etc), time, page etc.*/
+
                     sql_1_3_4 = "Select distinct(title), author_list, mdate,article_key,editors,pages, author_list, pub_year,EE,url,book_title,cross_ref" +
                             " from pub_info where " +
                             "book_title='" + replacePunctuation(aq.returnQueryD_ConferenceName()) + "' \n" +
@@ -253,19 +251,19 @@ public class XmlData{
 
                         // output data into terminal
                         System.out.println("Title: " + title);
-                        System.out.println(", Mdate: " + mdate);
-                        System.out.println(", Author: " + author_list);
-                        System.out.println(", Article_key: " + article_key);
-                        System.out.println(", Editors: " + editors);
-                        System.out.println(", Pages: " + pages);
-                        System.out.println(", EE: " + ee);
-                        System.out.println(", URL: " + url);
-                        System.out.println(", Pub_year: " + pub_year);
-                        //System.out.println(", Journal: " + journal);
-                        System.out.println(", Book_title: " + book_title);
-                        //System.out.println(", Volume: " + volume);
-                        //System.out.println(", Pub_number: " + pub_number);
-                        System.out.println(", Crossref: " + Cross_ref);
+                        System.out.println("Mdate: " + mdate);
+                        System.out.println("Author: " + author_list);
+                        System.out.println("Article_key: " + article_key);
+                        System.out.println("Editors: " + editors);
+                        System.out.println("Pages: " + pages);
+                        System.out.println("EE: " + ee);
+                        System.out.println("URL: " + url);
+                        System.out.println("Pub_year: " + pub_year);
+                        //System.out.println("Journal: " + journal);
+                        System.out.println("Book_title: " + book_title);
+                        //System.out.println("Volume: " + volume);
+                        //System.out.println("Pub_number: " + pub_number);
+                        System.out.println("Crossref: " + Cross_ref);
                         System.out.println("---------------------------------------");
                         System.out.println();
                         //coAuthors.add(author);
@@ -292,21 +290,22 @@ public class XmlData{
 
             stmt.close();
             conn.close();
-        }catch(SQLException se){
+        } catch (SQLException se) {
             // deal with JDBC error
             se.printStackTrace();
-        }catch(Exception e){
+        } catch (Exception e) {
             // deal with Class.forName error
             e.printStackTrace();
-        }finally{
+        } finally {
             // close resources
-            try{
-                if(stmt!=null) stmt.close();
-            }catch(SQLException se2){
-            }// do nothing
-            try{
-                if(conn!=null) conn.close();
-            }catch(SQLException se){
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException se2) {
+            }
+            // do nothing
+            try {
+                if (conn != null) conn.close();
+            } catch (SQLException se) {
                 se.printStackTrace();
             }
         }
@@ -326,7 +325,7 @@ public class XmlData{
      *
      * @throws SQLException if there is an SQL error, fetch the error and print it out in terminal
      */
-    public static void createTB(Statement stmt) throws SQLException{
+    public static void createTB(Statement stmt) throws SQLException {
         /*String createpub = "CREATE TABLE `pub_info` (\n" +
                 "  PUB_YEAR INT DEFAULT 0000,\n" + // api id is primary key
                 "  VOLUME INT NOT NULL DEFAULT 0,\n" +
@@ -376,15 +375,16 @@ public class XmlData{
 
     /**
      * parse dblp-soc-paper.xml file.
-     *
+     * <p>
      * In order to save the paper info into MySQL DB, we need to parse the XML file at first.
      * We use DocumentBuilderFactory to create a parse instance.
      * Then use Document Stream to open the file and pass it into our parser.
      * According to Dr.ZHang's requirement, then we extract all information what she need.
      * Last, insert these information into our database.
+     *
      * @param stmt pass MySQL statement object in order to execute insert command.
      */
-    public static void parseXML(Statement stmt){
+    public static void parseXML(Statement stmt) {
         try {
 
             // Get the DOM Builder Factory
@@ -403,15 +403,15 @@ public class XmlData{
                 if (node instanceof Element) {
                     // We have encountered an <inproceedings> or <article> tag
                     Publication pub = new Publication();
-                    //initialize authors list.
+                    // initialize authors list.
                     pub.authors = new ArrayList<String>();
-                    //initialize editors list.
+                    // initialize editors list.
                     pub.editors = new ArrayList<String>();
-                    //initialize ee list.
+                    // initialize ee list.
                     pub.ee = new ArrayList<String>();
-                    //initialize and define mdate value
+                    // initialize and define mdate value
                     pub.mdate = node.getAttributes().getNamedItem("mdate").getNodeValue();
-                    //initialize and define key value
+                    // initialize and define key value
                     pub.key = node.getAttributes().getNamedItem("key").getNodeValue();
                     NodeList childNodes = node.getChildNodes();
                     for (int j = 0; j < childNodes.getLength(); j++) {
@@ -433,7 +433,7 @@ public class XmlData{
                                     pub.title = content;
                                     break;
                                 case "series":
-                                    pub.series =content;
+                                    pub.series = content;
                                     break;
                                 case "journal":
                                     pub.journal = content;
@@ -483,15 +483,15 @@ public class XmlData{
                 for(int i=0;i<e.authors.size();i++){
                     temp2.add(e.authors.get(i).replaceAll("'","''"));
                 }**/
-                //System.out.println(e.year);
-                //String temp1=
+                // System.out.println(e.year);
+                // String temp1=
                 replacePunctuation(e.journal);
                 replacePunctuation(e.book_title);
                 replacePunctuation(e.publisher);
                 replacePunctuation(e.series);
                 replacePunctuation(e.isbn);
                 replacePunctuation(e.cross_ref);
-                //String temp1=e.journal.replaceAll("'","''");
+                // String temp1=e.journal.replaceAll("'","''");
                 /*String temp2=e.series.replaceAll("'","''");
                 String temp3=e.cross_ref.replaceAll("'","''");
                 String temp4=e.title.replaceAll("'","''");**/
@@ -504,31 +504,31 @@ public class XmlData{
                 stmt.execute(pubsql);**/
 
                 replacePunctuation(e.authors);
-                for(String auth: e.authors){
-                    //replacePunctuation(auth);
-                    String authsql="Insert INTO  auth_info VALUES ('"+auth+"') " +
+                for (String auth : e.authors) {
+                    // replacePunctuation(auth);
+                    String authsql = "Insert INTO  auth_info VALUES ('" + auth + "') " +
                             "ON duplicate KEY UPDATE author = author;";
                     stmt.execute(authsql);
 
                 }
 
-                //System.out.println(e.editors.toString());
-                for(String auth: e.authors){
-                    //replacePunctuation(auth);
-                    String article="Insert INTO pub_Info VALUES ('" + replacePunctuation(e.title) + "'," +
-                            "'"+ e.mdate+ "','" + auth + "','"+e.authors+"','" + e.key + "'," +
+                // System.out.println(e.editors.toString());
+                for (String auth : e.authors) {
+                    // replacePunctuation(auth);
+                    String article = "Insert INTO pub_Info VALUES ('" + replacePunctuation(e.title) + "'," +
+                            "'" + e.mdate + "','" + auth + "','" + e.authors + "','" + e.key + "'," +
                             "'" + replacePunctuation(e.editors) + "','" + e.pages + "'," +
-                            "'" + replacePunctuation(e.ee) + "','" + e.url + "',"+e.year+"," +
-                            "'"+e.journal+"','"+e.book_title+"',"+e.volume+","+e.number+"," +
-                            "'"+e.publisher+"','"+e.isbn+"'," +
-                            "'"+e.series+"','"+e.cross_ref+"') ;";
+                            "'" + replacePunctuation(e.ee) + "','" + e.url + "'," + e.year + "," +
+                            "'" + e.journal + "','" + e.book_title + "'," + e.volume + "," + e.number + "," +
+                            "'" + e.publisher + "','" + e.isbn + "'," +
+                            "'" + e.series + "','" + e.cross_ref + "') ;";
                     stmt.execute(article);
 
                 }
 
-                System.out.printf("Data %d is successfully inserted!\n",count);
+                System.out.printf("Data %d is successfully inserted!\n", count);
             }
-        }catch(Exception err){
+        } catch (Exception err) {
             System.out.println("" + err.getMessage());
         }
 
@@ -541,13 +541,13 @@ public class XmlData{
      *
      * @param str a statement element which may contains single quote '
      * @return str a valid statement element which replace single quote into two single quote
-     * */
+     */
     public static String replacePunctuation(String str) {
-        if(str==null){
+        if (str == null) {
             return str;
         }
         String returnStr = "";
-        if(str.indexOf("'") != -1) {
+        if (str.indexOf("'") != -1) {
             // original code from the Internet
             // returnStr = str.replace("'", "''");
             returnStr = str.replaceAll("'", "''");
@@ -563,11 +563,11 @@ public class XmlData{
      *
      * @param str a list of statement elements which may contains single quote '
      * @return str a list of valid statement element which replace single quote into two single quote
-     * */
+     */
     public static List<String> replacePunctuation(List<String> str) {
         String returnStr = "";
-        for(String s: str) {
-            if(s.indexOf("'") != -1) {
+        for (String s : str) {
+            if (s.indexOf("'") != -1) {
                 str.set(str.indexOf(s), s.replaceAll("'", "''"));
             }
         }
@@ -581,19 +581,19 @@ public class XmlData{
      *
      * @param questionNum a XQuery statement index selector
      * @return str a valid statement element which replace single quote into two single quote
-     * */
-    public static String XQueryStatement(int questionNum){
+     */
+    public static String XQueryStatement(int questionNum) {
         String res;
         if (questionNum == 1) {
             res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
-                            "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
-                            "return\n" +
-                            "<articles>\n" +
-                            "{for $x in $inproceedings\n" +
-                            "return $x/title}\n" +
-                            "{for $y in $article\n" +
-                            "return $y/title}\n" +
-                            "</articles>";
+                    "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
+                    "return\n" +
+                    "<articles>\n" +
+                    "{for $x in $inproceedings\n" +
+                    "return $x/title}\n" +
+                    "{for $y in $article\n" +
+                    "return $y/title}\n" +
+                    "</articles>";
         } else if (questionNum == 2) {
             res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
                     "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
@@ -606,30 +606,29 @@ public class XmlData{
                     "where $y/author='Jia Zhang' and $y/year=2018\n" +
                     "return $y/title}\n" +
                     "</articles>";
-        }else if(questionNum == 3) {
+        } else if (questionNum == 3) {
             res = "Query 3";
-        }else{
+        } else {
             res = "error";
         }
         return res;
     }
 
-    public static String Q3(String xqyname){
+    public static String Q3(String xqyname) {
         String res;
-        if(xqyname=="inproceedings"){
-            res="let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+        if (xqyname == "inproceedings") {
+            res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
                     "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
-            "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
-            "let $authors2 := fn:distinct-values($article/author)\n" +
-            "for $a in $authors1\n" +
-            "let $count := fn:count($inproceedings[author = $a])\n" +
-            "order by $count\n" +
-            "where $count>10\n" +
-            "return <result>{$a}</result>";
-         return res;
-        }
-        else if(xqyname=="articles"){
-            res="let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
+                    "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
+                    "let $authors2 := fn:distinct-values($article/author)\n" +
+                    "for $a in $authors1\n" +
+                    "let $count := fn:count($inproceedings[author = $a])\n" +
+                    "order by $count\n" +
+                    "where $count>10\n" +
+                    "return <result>{$a}</result>";
+            return res;
+        } else if (xqyname == "articles") {
+            res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
                     "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
                     "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
                     "let $authors2 := fn:distinct-values($article/author)\n" +
@@ -639,8 +638,7 @@ public class XmlData{
                     "where $count>10\n" +
                     "return <result>{$b}</result>";
             return res;
-        }
-        else{
+        } else {
             res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
                     "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
                     "let $authors1 := fn:distinct-values($inproceedings/author)\n" +
@@ -666,7 +664,7 @@ public class XmlData{
         }
     }
 
-    public static String Q4(String papername){
+    public static String Q4(String papername) {
         String res;
         res = "let $inproceedings :=doc(\"dblp-soc-papers.xml\")/dblp/inproceedings\n" +
                 "let $article := doc(\"dblp-soc-papers.xml\")/dblp/article\n" +
@@ -674,7 +672,7 @@ public class XmlData{
 
                 "<metadata>\n" +
                 "{for $x in $inproceedings\n" +
-                "where $x/title='"+replacePunctuation(papername)+"'\n" +
+                "where $x/title='" + replacePunctuation(papername) + "'\n" +
                 "return\n" +
                 "<InproceedingsMetadata>\n" +
                 "{($x/title, $x/author,$x/pages,$x/year,$x/booktitle,$x/ee,$x/crossref,$x/url)}\n" +
@@ -682,7 +680,7 @@ public class XmlData{
                 "}\n" +
 
                 " {for $y in $article\n" +
-                "where $y/title='"+replacePunctuation(papername)+"'\n" +
+                "where $y/title='" + replacePunctuation(papername) + "'\n" +
                 "return\n" +
                 "<ArticlesMetadata>\n" +
                 "{($y/title, $y/author,$y/pages,$y/year,$y/volume,$y/number,$y/journal,$y/ee,$y/url)}\n" +
@@ -692,6 +690,7 @@ public class XmlData{
 
         return res;
     }
+
     /**
      * Execute XQuery engine and do the XQuery statement.
      *
@@ -701,8 +700,8 @@ public class XmlData{
      * @param questionNum a XQuery statement index selector for lab 2 part questions
      * @throws XQException deal with the error when the XQuery is executed
      */
-    private static void execute(int questionNum) throws XQException{
-        //InputStream inputStream = new FileInputStream(new File("books.xqy"));
+    private static void execute(int questionNum) throws XQException {
+        // InputStream inputStream = new FileInputStream(new File("books.xqy"));
 
         XQDataSource ds = new SaxonXQDataSource();
         XQConnection conn = ds.getConnection();
@@ -715,8 +714,8 @@ public class XmlData{
         }
     }
 
-    private static void execute(String state) throws XQException{
-        //InputStream inputStream = new FileInputStream(new File("books.xqy"));
+    private static void execute(String state) throws XQException {
+        // InputStream inputStream = new FileInputStream(new File("books.xqy"));
         XQDataSource ds = new SaxonXQDataSource();
         XQConnection conn = ds.getConnection();
 
@@ -744,14 +743,14 @@ public class XmlData{
         while (result1.next()) {
             set.add(result1.getItemAsString(null).trim());
         }
-        //System.out.println(set.size());
+        // System.out.println(set.size());
 
         XQResultSequence result2 = executeQ3WithReturn(Q3("articles"));
 
         while (result2.next()) {
             set.add(result2.getItemAsString(null).trim());
         }
-        //System.out.println(set.size());
+        // System.out.println(set.size());
 
         XQResultSequence result3 = executeQ3WithReturn(Q3("both"));
 
@@ -763,38 +762,37 @@ public class XmlData{
                 set.add(cur);
         }
 
-        //System.out.println(set.size());
+        // System.out.println(set.size());
         for (String t : set) {
             System.out.println("author name: " + t);
         }
     }
 
-    public static void part2(int num){
-        try{
-            if(num==3){
+    public static void part2(int num) {
+        try {
+            if (num == 3) {
                 executeQuery3();
                 return;
             }
-             // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+            // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
             execute(num);
-        }
-        catch (XQException | IOException e) {
+        } catch (XQException | IOException e) {
             e.printStackTrace();
         }
 
     }
 
 
-
-    public static void part2(String name){
-        try{// Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
+    public static void part2(String name) {
+        try {
+            // Select the lab1 question number for part 2. Ex: 2.1: 1,  2.2: 2, 2.3: 3 , 2.4: 4.
             execute(Q4(name));
-        }
-        catch (XQException e) {
+        } catch (XQException e) {
             e.printStackTrace();
         }
 
     }
+
     public static void main(String[] args) throws SQLException, IOException {
         configureProp();
         conDB();

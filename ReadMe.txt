@@ -24,7 +24,7 @@ DB_PASSWORD = "123321123";
 Java Version: 1.8.0_211
 
 
-2. Set up Configuration
+2. Set up Configuration (To avoid the error "cannot connect to database", please do the following)
 2.1 Change MySQL DB configuration:
 (1) First open the project by IntelliJ IDEA
 File -> Open -> Select the Project File Name: XMLtoData then open it.
@@ -58,19 +58,23 @@ File -> Project Setting:
 Now it should create DB tables and upload data into it. Then it will display the options:
 
 Which query do you want to choose?
-1.3.1 Given author name A, list all of her co-authors
-1.3.2 Given a paper name, list its publication metadata
-1.3.3 Given a journal name, a year (volume) and an issue (number), find out the metadata of all the papers published in the book
-1.4.3 Given a conference name and a year, find out the metadata of all the papers published in the book
+a. 1.3.1 Given author name A, list all of her co-authors.
+b. 1.3.2 Given a paper name, list its publication metadata.
+c. 1.3.3 Given a journal name, a year (volume) and an issue (number), find out the metadata of all the papers published in the book.
+d. 1.3.4 Given a conference name and a year, find out the metadata of all the papers published in the book.
+e. 2.1 Display all the article titles published in the area of SOSE.
+f. 2.2 Display the titles of the articles published by a researcher (Jia Zhang) in a specific year (2018).
+g. 2.3 Display all the authors who have published more than 10 papers in the area of SOSE to date.
+h. 2.4 Given a paper name, list its publication metadata, including paper title, all co-authors, publication channel.
+q. Quit the queries.
 Please choose:
-a. 1.3.1
-b. 1.3.2
-c. 1.3.3
-d. 1.3.4
-q. Quit the queries:
 
 You can choose the options according to Dr. Zhang's questions.
+To choose which query to use, you only need to type in letter a to h or q to quit the program.
 
-
-
-
+// For query 1.3.3, the value of year means "volume" attribute and value of issue means "number" attribute.
+// All of the inputs are case-, space- and punctuation-sensitive.
+// If this program turns error, perhaps you have typed in wrong format input, please check and select the choice (a to h) again.
+// If you want to run this program again, please drop the generated tables from MySQL firstly, the MySQL code is:
+drop table pub_info;
+drop table author;

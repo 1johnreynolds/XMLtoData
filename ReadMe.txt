@@ -33,7 +33,7 @@ Check the left bar Project and get the project file structure.
 (2) Open config.properties file under the path: ./XMLtoData/resources
 Set up MySQL DB Schema name, it should have a schema at first
 - JDBC_DRIVER = com.mysql.cj.jdbc.Driver
-- DB_URL = jdbc:mysql://localhost:3306/CS7340TEAMONELABONE
+- DB_URL = jdbc:mysql://localhost:3306/CS7340TEAMONELABONE // your DB name
 
 Set up user name and password of DB
 - USER = root
@@ -73,6 +73,8 @@ You can choose the options according to Dr. Zhang's questions.
 To choose which query to use, you only need to type in letter a to h or q to quit the program.
 
 // For query 1.3.3, the value of year means "volume" attribute and value of issue means "number" attribute.
+// For query 1.3.4, conference name means "booktitle" attribute.
+// For query 2.3, this query needs more time to run than others. Please wait patiently.
 // All of the inputs are case-, space- and punctuation-sensitive.
 // If this program turns error, perhaps you have typed in wrong format input, please check and select the choice (a to h) again.
 // If you want to run this program again, please drop the generated tables from MySQL firstly, the MySQL code is:

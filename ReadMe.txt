@@ -40,6 +40,11 @@ Set up user name and password of DB
 - USER = root
 - PASS = 123321123 // your DB password
 
+We have eliminated the need for MySQL Dump File because we create the DB tables and load the information internally.
+Our Config.properties file in resources allows you to apply your database information accordingly.
+When the code is run, it will create tables and import the data from the XML file automatically.
+Once this is completed you can execute the queries.
+
 2.2 Set up project Structure
 File -> Project Setting:
 -> Project:

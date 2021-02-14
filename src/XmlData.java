@@ -24,7 +24,7 @@ import com.saxonica.xqj.SaxonXQDataSource;
  * Then according to different attribute, we create a MySQL DB and create 3 tables: pub_info, auth_info, pub_info
  * Then we finish the SQL queries from Dr. Zhang requirments in MySQL.</p>
  *
- * @author Beichen Hu, John Reynolds
+ * @author Beichen Hu, Jiachen Tang, Jianyu Shen, John Reynolds
  * @date Feb 5th, 2021
  * @since 1.0
  */

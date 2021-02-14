@@ -50,16 +50,15 @@ File -> Project Setting:
 -> Project:
   Module SDK 1.8 (Java Version 1.8.0_211)
   Project Language Level: SDK Default 8
-  Project Compiler Output: ./Service-Oriented Computing /Lab1/CS7340Lab1/XMLtoData/out
+  Project Compiler Output: ./Service-Oriented Computing /Lab1/CS7340Lab1/XMLtoData/out //this can be unique to you
 -> Modules:
-  Dependencies: Please add external jar file: ./XMLtoData/lib, then apply it
+  Dependencies: Please add external jar files: ./XMLtoData/lib, then apply it
   Paths: Use Module Compile Output Path
 
 
 3. Execution
 (1) Open ./src/XMLData.java file
 (2) Run this file at main() function
-
 
 Now it should create DB tables and upload data into it. Then it will display the options:
 

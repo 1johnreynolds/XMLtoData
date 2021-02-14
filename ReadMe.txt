@@ -53,7 +53,7 @@ File -> Project Setting:
   Project Compiler Output: ./Service-Oriented Computing /Lab1/CS7340Lab1/XMLtoData/out //this can be unique to you
 -> Modules:
   Dependencies: Please add external jar files: ./XMLtoData/lib, then apply it
-                File -> Project Structure -> Module -> Dependencies -> add jar files here.
+                File -> Project Structure -> Module -> Dependencies -> add XMLtoData/lib with jar files here.
   Paths: Use Module Compile Output Path
 
 
